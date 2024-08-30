@@ -28,8 +28,10 @@ Some potential improvements:
 - There may be minor technical errors in the implementation. I can fix those.
 
 To run:
-- `pip install matplotlib numpy`
-- `python ekf_slam.py`
+```bash
+pip install matplotlib numpy
+python ekf_slam.py
+```
 
 ```
 @book{10.5555/1121596,
