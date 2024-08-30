@@ -23,6 +23,10 @@ Some potential improvements:
 - I model the robot's control input and observation by adding a fixed amount of noise to its control and observation inputs. Noise is better represented as a proportion of the actual sensor data. So instead of adding gaussian noise with a fixed std 0.01, I would add gaussian noise with std 5% of the sensor value.
 - There may be minor technical errors in the implementation. I can fix those.
 
+To run:
+- `pip install matplotlib numpy`
+- `python ekf_slam.py`
+
 ```
 @book{10.5555/1121596,
 author = {Thrun, Sebastian and Burgard, Wolfram and Fox, Dieter},
