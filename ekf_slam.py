@@ -4,7 +4,8 @@ from matplotlib.animation import FuncAnimation
 
 fig, ax = plt.subplots(figsize=(10, 10))
 
-true_landmarks = np.array([[5, 5], [-4, 6], [-6, -4], [7, -3]])
+# true_landmarks = np.array([[5, 5], [-4, 6], [-6, -4], [7, -3]])
+true_landmarks = np.random.uniform(-10, 10, (4, 2))
 
 true_robot_trajectory = []
 dead_reckoning_robot_trajectory = []
@@ -14,20 +15,23 @@ state_len = 3 + 2 * len(true_landmarks)
 true_state_prev = np.zeros((state_len))
 mu_prev = np.zeros(state_len)
 # TODO: fix the initialization here. sigma_prev should be infinities for the landmarks
-sigma_prev = np.eye(state_len)
+# sigma_prev = np.eye(state_len)
+sigma_prev = np.zeros((state_len, state_len))
+sigma_prev[:3, :3] = np.eye(3)
+np.fill_diagonal(sigma_prev[3:, 3:], 1000)
+
 
 mu_dead_reckoning_prev = np.zeros(state_len)
 # TODO: fix the initialization here. sigma_prev should be infinities for the landmarks
-sigma_dead_reckoning_prev = np.eye(state_len)
+# sigma_dead_reckoning_prev = np.eye(state_len)
+sigma_dead_reckoning_prev = np.zeros((state_len, state_len))
+sigma_dead_reckoning_prev[:3, :3] = np.eye(3)
+np.fill_diagonal(sigma_dead_reckoning_prev[3:, 3:], 1000)
 
 landmarks_seen: set[int] = set()
 N_t_prev = 0
 R_t = np.array([[0.3, 0.0, 0.0], [0.0, 0.3, 0.0], [0.0, 0.0, 0.3]])
 np.fill_diagonal(sigma_prev[3:, 3:], 10)
-
-# TODO:
-# to not get weird behavior, keep
-# angles between -pi and pi.
 
 
 def get_u_t(t):
@@ -37,19 +41,10 @@ def get_u_t(t):
 
     returns the true control input and the noisy control input
     """
-    # TODO: switched around. the control input that should be reported
-    # should be the perfect velocity.f
-    # the true velocity should be the noisy one
-    if t < 10:
-        u_v = 0.5
-        u_omega = 0.1
-        v_gt = np.random.normal(u_v, 0.1)
-        omega_gt = np.random.normal(u_omega, 0.05)
-    else:
-        u_v = 0.25
-        u_omega = 0.1
-        v_gt = np.random.normal(u_v, 0.1)
-        omega_gt = np.random.normal(u_omega, 0.01)
+    u_v = 0.25
+    u_omega = 0.1
+    v_gt = np.random.normal(u_v, 0.1)
+    omega_gt = np.random.normal(u_omega, 0.05)
 
     return np.array([v_gt, omega_gt]), np.array([u_v, u_omega])
 
@@ -91,7 +86,6 @@ def get_z_t(true_state: np.ndarray, true_landmarks: np.ndarray) -> tuple[np.ndar
     c_t = np.arange(len(true_landmarks))
 
     return z_t_sensor, c_t
-    # raise NotImplementedError
 
 
 def get_dead_reckoning_state(mu_prev: np.ndarray, u_t: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -142,11 +136,6 @@ def get_dead_reckoning_state(mu_prev: np.ndarray, u_t: np.ndarray) -> tuple[np.n
 def run_ekf_slam_known_correspondences(
     mu_prev: np.ndarray, sigma_prev: np.ndarray, u_t: np.ndarray, z_t: np.ndarray, c_t: np.ndarray, R_t: np.ndarray, landmarks_seen: set
 ) -> tuple[np.ndarray, np.ndarray]:
-    # returns mu_bar_t, sigma_bar_t, mu_t, sigma_t
-
-    v_t, omega_t = u_t
-    delta_t = 1
-
     # steps 1-5
     mu_bar_t, sigma_bar_t = get_dead_reckoning_state(mu_prev, u_t)
 
@@ -239,8 +228,8 @@ def animate(frame):
     belief_robot_trajectory.append(mu_t[:3])
 
     true_state_prev = true_state
-    mu_prev = mu_t  # mu_bar earlier
-    sigma_prev = sigma_t  # sigma_bar earlier
+    mu_prev = mu_t
+    sigma_prev = sigma_t
     mu_dead_reckoning_prev = mu_dead_reckoning
 
     # Draw the true landmarks
