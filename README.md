@@ -22,6 +22,8 @@ Specifically, I implement the `EKF_SLAM_known_correspondences` algorithm on page
 
 The code is not the cleanest but it's for learning purposes so that's okay :)
 
+For help understanding the algorithm, you can watch this [video](https://www.youtube.com/watch?v=X30sEgIws0g)
+
 Some potential improvements:
 
 - I model the robot's control input and observation by adding a fixed amount of noise to its control and observation inputs. Noise is better represented as a proportion of the actual sensor data. So instead of adding gaussian noise with a fixed std 0.01, I would add gaussian noise with std 5% of the sensor value.
@@ -49,5 +51,3 @@ isbn = {0262201623},
 publisher = {The MIT Press}
 }
 ```
-
-For help understanding the algorithm, you can watch this [video](https://www.youtube.com/watch?v=X30sEgIws0g)
