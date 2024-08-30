@@ -30,8 +30,24 @@ np.fill_diagonal(sigma_dead_reckoning_prev[3:, 3:], 1000)
 
 landmarks_seen: set[int] = set()
 N_t_prev = 0
-R_t = np.array([[0.3, 0.0, 0.0], [0.0, 0.3, 0.0], [0.0, 0.0, 0.3]])
-np.fill_diagonal(sigma_prev[3:, 3:], 10)
+
+# set the stds for u - actual motion noise
+u_v_std = 0.1
+u_omega_std = 0.05
+
+# set the stds for R - expected motion noise
+R_t_x_std = 0.1
+R_t_y_std = 0.1
+R_t_theta_std = 0.05
+R_t = np.array([[R_t_x_std**2, 0.0, 0.0], [0.0, R_t_y_std**2, 0.0], [0.0, 0.0, R_t_theta_std**2]])
+
+# set the stds for z_t - actual observation noise
+z_t_r_std = 0.1
+z_t_theta_std = 0.1
+
+# set the stds for Q - expected observation noise
+Q_std_r = 0.1
+Q_std_theta = 0.1
 
 
 def get_u_t(t):
@@ -43,8 +59,8 @@ def get_u_t(t):
     """
     u_v = 0.25
     u_omega = 0.1
-    v_gt = np.random.normal(u_v, 0.1)
-    omega_gt = np.random.normal(u_omega, 0.05)
+    v_gt = np.random.normal(u_v, u_v_std)
+    omega_gt = np.random.normal(u_omega, u_omega_std)
 
     return np.array([v_gt, omega_gt]), np.array([u_v, u_omega])
 
@@ -81,7 +97,13 @@ def get_z_t(true_state: np.ndarray, true_landmarks: np.ndarray) -> tuple[np.ndar
     angle_to_landmark = np.arctan2(true_landmarks[:, 1] - true_state[1], true_landmarks[:, 0] - true_state[0])
     theta_t = normalize_angle(angle_to_landmark - true_state[2])
     z_t = np.array([r_t, theta_t]).T  # shape (n_landmarks, 2)
-    z_t_sensor = z_t + np.random.normal(0, 0.1, z_t.shape)
+
+    sensor_noise = np.zeros_like(z_t)
+    sensor_noise[:, 0] = np.random.normal(0, z_t_r_std, z_t.shape[0])
+    sensor_noise[:, 1] = np.random.normal(0, z_t_theta_std, z_t.shape[0])
+
+    z_t_sensor = z_t + sensor_noise
+    # np.random.normal(0, 0.1, z_t.shape)
 
     c_t = np.arange(len(true_landmarks))
 
@@ -141,9 +163,8 @@ def run_ekf_slam_known_correspondences(
 
     # step 6
     Q_t = np.eye(2)
-    sigma_r = 0.1
-    sigma_theta = 0.1
-    np.fill_diagonal(Q_t, [sigma_r**2, sigma_theta**2])
+
+    np.fill_diagonal(Q_t, [Q_std_r**2, Q_std_theta**2])
     # feature idx is the feature that we have observed. in this case, we fully observe all landmarks at every step
 
     # step 7
