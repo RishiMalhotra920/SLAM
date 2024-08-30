@@ -1,5 +1,9 @@
 # SLAM
 
+
+https://github.com/user-attachments/assets/10195c25-108e-4009-bf12-0c59bd279666
+
+
 The robot navigates a predefined path on a 2d grid, determining the map and its location on the map. We assume known correspondences between the observations the robot makes and the true landmarks.
 
 The robot receives control signals that tell it to move in circles (its dead reckoning trajectory). However, these signals are noisy and the robot ends up going on an adventure (the true trajectory). I use SLAM to determine the robot's belief trajectory using noisy control inputs and noisy observations that track its true trajectory.
