@@ -25,7 +25,7 @@ The code is not the cleanest but it's for learning purposes so that's okay :)
 Some potential improvements:
 
 - I model the robot's control input and observation by adding a fixed amount of noise to its control and observation inputs. Noise is better represented as a proportion of the actual sensor data. So instead of adding gaussian noise with a fixed std 0.01, I would add gaussian noise with std 5% of the sensor value.
-- There may be minor technical errors in the implementation. I can fix those.
+- There may be minor technical errors in the implementation. I can fix those. This is probably why, on some runs, you see really high belief-true trajectory deviation - the sensor noise is a high proportion of the true control signal/observation input.
 
 To run:
 ```bash
