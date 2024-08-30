@@ -1,7 +1,11 @@
 # SLAM
 
 
-https://github.com/user-attachments/assets/10195c25-108e-4009-bf12-0c59bd279666
+
+
+https://github.com/user-attachments/assets/8289f331-d025-4df1-957e-148ffeb5c134
+
+
 
 
 The robot navigates a predefined path on a 2d grid, determining the map and its location on the map. We assume known correspondences between the observations the robot makes and the true landmarks.
