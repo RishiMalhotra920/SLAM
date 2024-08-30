@@ -49,3 +49,5 @@ isbn = {0262201623},
 publisher = {The MIT Press}
 }
 ```
+
+For help understanding the algorithm, you can watch this video: `https://www.youtube.com/watch?v=X30sEgIws0g`
