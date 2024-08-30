@@ -14,7 +14,6 @@ belief_robot_trajectory = []
 state_len = 3 + 2 * len(true_landmarks)
 true_state_prev = np.zeros((state_len))
 mu_prev = np.zeros(state_len)
-# TODO: fix the initialization here. sigma_prev should be infinities for the landmarks
 # sigma_prev = np.eye(state_len)
 sigma_prev = np.zeros((state_len, state_len))
 sigma_prev[:3, :3] = np.eye(3)
@@ -22,7 +21,6 @@ np.fill_diagonal(sigma_prev[3:, 3:], 1000)
 
 
 mu_dead_reckoning_prev = np.zeros(state_len)
-# TODO: fix the initialization here. sigma_prev should be infinities for the landmarks
 # sigma_dead_reckoning_prev = np.eye(state_len)
 sigma_dead_reckoning_prev = np.zeros((state_len, state_len))
 sigma_dead_reckoning_prev[:3, :3] = np.eye(3)
